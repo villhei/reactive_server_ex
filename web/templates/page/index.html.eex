@@ -1,0 +1,11 @@
+<div class="jumbotron">
+    <h2>test.exs</h2>
+    <%= if @current_user do %>
+        <p class="lead">As a logged in user, you can browser users</p>
+        <div id="messages"></div>
+        <input id="chat-input" type="text"></input>
+    <% else %>
+        <p><a href="<%= login_path(@conn, :login_page) %>">Sign in</a>
+        <p><a href="<%= page_path(@conn, :signup) %>">Register</a>
+    <% end %>
+</div>

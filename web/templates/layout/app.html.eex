@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title><%= title %></title>
+    <link rel="stylesheet" href="<%= static_path(@conn, "/css/style.css") %>">
+  </head>
+
+  <body>
+    <div class="container">
+      <header class="header">
+      <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="<%= page_path(@conn, :index) %>">Reactive example</a>
+    </div>
+
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+          <%= if @current_user do %>
+            <li class="<%= active_path(@conn, user_path(@conn, :index)) %>"><a href="<%= user_path(@conn, :index) %>">Users</a>
+          <% end %>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+          <%= if @current_user do %>
+            <li class="active"><a href="<%=  user_path(@conn, :show, current_user(@conn).id ) %>">Logged in as <%= "#{current_user(@conn).displayname}"%></a></li>
+            <li><a href="<%= logout_path(@conn, :logout) %>">Log out</a></li>
+          <% end %>
+      </ul>
+    </div>
+</nav>
+</header>
+      <p class="alert alert-info" role="alert"><%= get_flash(@conn, :info) %></p>
+      <p class="alert alert-danger" role="alert"><%= get_flash(@conn, :error) %></p>
+
+      <main role="main">
+        <%= render @view_module, @view_template, assigns %>
+      </main>
+
+    </div> <!-- /container -->
+    <script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+    <script>
+        <%= if Guardian.Plug.current_token(@conn) do %>
+          window.userToken ="<%= Guardian.Plug.current_token(@conn) %>";
+        <% end %>
+    </script>
+    <script src="<%= static_path(@conn, "/js/main.js") %>"></script>
+  </body>
+</html>

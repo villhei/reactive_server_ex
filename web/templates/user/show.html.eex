@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-sm-6 col-centered">
+        <h2>Show user</h2>
+        <ul>
+
+          <li>
+            <strong>Email:</strong>
+            <%= @user.email %>
+          </li>
+
+          <li>
+            <strong>Displayname:</strong>
+            <%= @user.displayname %>
+          </li>
+
+          <li>
+            <strong>Firstname:</strong>
+            <%= @user.firstname %>
+          </li>
+
+          <li>
+            <strong>Lastname:</strong>
+            <%= @user.lastname %>
+          </li>
+
+          <li>
+            <strong>Bio:</strong>
+            <%= @user.bio %>
+          </li>
+
+        </ul>
+        <%= link "Edit", to: user_path(@conn, :edit, @user), class: "btn btn-primary btn-default"  %>
+        <%= link "Back", to: user_path(@conn, :index), class: "btn btn-back"  %>
+    </div>
+</div>
