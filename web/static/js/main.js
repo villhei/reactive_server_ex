@@ -56,37 +56,45 @@ function channelDriver($input, driverName) {
     }).share();
 }
 
-function main(sources) {
 
-    const channel$ = sources.Channel;
-
-    channel$.subscribe(msg => console.log('Subs: ', msg));
-
-    const DOMSink = sources.DOM.select('.message-field')
-        .events('input')
-        .map(ev => ev.target.value)
-        .startWith('')
-        .map(name =>
-            div([
-                div([
-                    label('message:'),
-                    input('.message-field', {attributes: {type: 'text'}}),
-                    hr(),
-                    h1('Message' + name)
-                ])
-            ])
-        );
-
+function LabeledInput(sources) {
+    // Intent
     const messagesOut = sources.DOM.select('.message-field')
         .events('keypress')
         .filter(ev => ev.keyCode === 13)
         .map(ev => ev.target.value);
 
-    messagesOut.subscribe(msg => console.log('Subs: ', msg));
+    // Model
+    const initialLabel$ = sources.props$
+        .map(props => props.initial)
+        .first();
 
-    console.log('not even')
+    // View
+    const input = Input({
+        Props: Rx.Observable.of({className: 'message-field', type: 'text', style: {}}),
+        Assign: messagesOut.map(() => '')
+    });
 
-    const redrawMsg$ = messagesOut.startWith('').map(msg => '');
+    const vtree$ = Rx.Observable.combineLatest(initialLabel$, input.DOM,
+        (initialLabel, inputDOM) =>
+            div([
+                label(initialLabel),
+                inputDOM
+            ])
+    );
+    return {
+        DOM: vtree$
+    };
+}
+function main(sources) {
+
+    const props$ = Rx.Observable.of({
+        label: 'Message', initial: ''
+    });
+    const childSources = {DOM: sources.DOM, props$};
+    const messageBox = LabeledInput(childSources);
+
+    const channel$ = sources.Channel;
 
     const messagesChat = channel$.scan((acc, msg) => acc.concat(msg), []).startWith([]);
 
