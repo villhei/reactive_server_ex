@@ -1,9 +1,8 @@
 <div class="jumbotron">
     <h2>test.exs</h2>
     <%= if @current_user do %>
-        <p class="lead">As a logged in user, you can browser users</p>
-        <div id="messages"></div>
-        <input id="chat-input" type="text"></input>
+        <div id="client-app-container"></div>
+        <script src="<%= static_path(@conn, "/js/main.js") %>" async></script>
     <% else %>
         <p><a href="<%= login_path(@conn, :login_page) %>">Sign in</a>
         <p><a href="<%= page_path(@conn, :signup) %>">Register</a>
