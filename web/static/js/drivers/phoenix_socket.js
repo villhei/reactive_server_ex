@@ -1,15 +1,25 @@
 import {Socket} from "phoenix"
 import Rx from 'rx';
 
-function PhoenixChannel(outgoing$) {
+export function makePhoenixChannelDriver(channelName) {
+    return function(outgoing$, driverName) {
+        return PhoenixChannel(outgoing$, channelName);
+    };
+}
+
+export function PhoenixChannel(outgoing$, channelName) {
+    const defaultChannel = 'lobby';
     return Rx.Observable.create(observer => {
+        // Init socket
         const socket = new Socket('/socket', {
             params: {
                 guardian_token: window.userToken
             }
         });
         socket.connect();
-        let channel = socket.channel('room:lobby', {guardian_token: window.userToken});
+        
+        // Init and join a channel
+        let channel = socket.channel('room:' + channelName || defaultChannel , {guardian_token: window.userToken});
         channel.join()
             .receive('ok', resp => {
                 let history = resp.history.reverse();
@@ -18,6 +28,8 @@ function PhoenixChannel(outgoing$) {
             .receive('error', resp => {
                 observer.onError(resp);
             });
+            
+        // Interface with the surrounding world
 
         channel.on('new_msg', msg => {
             observer.onNext(msg);
@@ -28,5 +40,3 @@ function PhoenixChannel(outgoing$) {
         );
     }).share();
 }
-
-export default PhoenixChannel

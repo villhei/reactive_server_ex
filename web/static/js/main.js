@@ -4,7 +4,7 @@ import isolate from '@cycle/isolate';
 import Rx from 'rx';
 import {div, p, makeDOMDriver} from '@cycle/dom';
 
-import PhoenixChannel from "./drivers/phoenix_socket.js"
+import {makePhoenixChannelDriver} from "./drivers/phoenix_socket.js"
 import LabeledInput from './components/labeled_input.js';
 
 function main(sources) {
@@ -46,5 +46,5 @@ function main(sources) {
 
 Cycle.run(main, {
     DOM: makeDOMDriver('#client-app-container'),
-    Channel: PhoenixChannel
+    Channel: makePhoenixChannelDriver('lobby')
 });
