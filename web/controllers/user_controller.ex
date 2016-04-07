@@ -7,6 +7,7 @@ defmodule ReactiveServer.UserController do
 
   # https://hexdocs.pm/phoenix/Phoenix.Controller.Pipeline.html#summary
   plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.AuthErrorHandler
+  plug ReactiveServer.Plug.CurrentUser
 
   # Scrub empty params to cause validation errors
   plug :scrub_params, "user" when action in [:create, :update]
@@ -24,12 +25,12 @@ defmodule ReactiveServer.UserController do
   def index(conn, _params, current_user, _claims) do
     users = Repo.all(UserQuery.order_by_email)
     |> Enum.map(fn(user) -> remove_secrets(user) end)
-    render(conn, "index.html", users: users, current_user: current_user)
+    render(conn, "index.html", users: users)
   end
 
   def new(conn, _params, current_user, _claims) do
     changeset = User.changeset(%User{})
-    render(conn, "new.html", current_user: current_user, changeset: changeset)
+    render(conn, "new.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params} = params, current_user, _claims) do
@@ -40,17 +41,17 @@ defmodule ReactiveServer.UserController do
       true -> conn
         |> put_flash(:error, "An user exists with the given email address")
         |> render("new.html", changeset: changeset)
-      false -> do_create(conn, params, current_user, changeset)
+      false -> do_create(conn, params, changeset)
     end 
   end
 
-  defp do_create(conn, %{"user" => user_params}, current_user, changeset) do
+  defp do_create(conn, %{"user" => user_params}, changeset) do
     case UserService.create(changeset) do
       {:ok, user} -> 
         conn  |> put_flash(:info, "User created")
               |> redirect(to: user_path(conn, :index))
       {:error, changeset} -> 
-        conn  |> render("new.html", changeset: changeset,  current_user: current_user)
+        conn  |> render("new.html", changeset: changeset)
     end
   end
 
@@ -62,15 +63,15 @@ defmodule ReactiveServer.UserController do
     end
   end
 
-  def show(conn, %{"id" => id}, current_user, _claims) do
+  def show(conn, %{"id" => id}, _current_user, _claims) do
     user = Repo.get!(User, id)
-    render(conn, "show.html", current_user: current_user, user: remove_secrets(user))
+    render(conn, "show.html",  user: remove_secrets(user))
   end
 
-  def edit(conn, %{"id" => id}, current_user, _claims) do
+  def edit(conn, %{"id" => id}, _current_user, _claims) do
     user = Repo.get!(User, id)
     changeset = User.changeset(user)
-    render(conn, "edit.html", user: user, current_user: current_user, changeset: changeset)
+    render(conn, "edit.html", user: user, changeset: changeset)
   end
   
   defp email_address_in_use?(nil), do: false
@@ -81,19 +82,19 @@ defmodule ReactiveServer.UserController do
     existing_user != nil
   end
 
-  def update(conn, %{"id" => id, "user" => user_params} = params, current_user, _claims) do
+  def update(conn, %{"id" => id, "user" => user_params} = params, _current_user, _claims) do
     user = Repo.get!(User, id)
     changeset = User.update_changeset(user, user_params)
     email = Ecto.Changeset.get_change(changeset, :email, nil)
     case email_address_in_use?(email) do
-      false -> do_update(conn, params, current_user, changeset)
+      false -> do_update(conn, params, changeset)
       true -> conn
       |> put_flash(:error, "An user exists with the given email address")
-      |> render("edit.html", current_user: current_user, user: remove_secrets(user), changeset: changeset) 
+      |> render("edit.html", user: remove_secrets(user), changeset: changeset) 
     end 
   end
 
-  defp do_update(conn, %{"id" => id, "user" => user_params}, current_user, changeset) do
+  defp do_update(conn, %{"id" => id, "user" => user_params}, changeset) do
     user = Repo.get!(User, id)
     if changeset.valid? do
       Repo.update(changeset)
@@ -101,7 +102,7 @@ defmodule ReactiveServer.UserController do
       |> put_flash(:info, "User updated successfully.")
       |> redirect(to: user_path(conn, :index))
     else
-      render(conn, "edit.html", current_user: current_user, user: remove_secrets(user), changeset: changeset)
+      render(conn, "edit.html", user: remove_secrets(user), changeset: changeset)
     end
   end
 

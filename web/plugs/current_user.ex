@@ -1,7 +1,5 @@
-defmodule ReactiveServer.Plugs.CurrentUser do
-
-	import Plug.Conn
-
+defmodule ReactiveServer.Plug.CurrentUser do
+  import Plug.Conn
   import Phoenix.Controller
 
 	def init(default), do: default
