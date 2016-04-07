@@ -9,6 +9,7 @@ function LabeledInput(sources) {
         .events('keypress')
         .filter(event => event.keyCode === 13)
         .map(ev => ev.target.value)
+        .share()
         .startWith('');
 
     const input = Input({
@@ -31,6 +32,7 @@ function LabeledInput(sources) {
     );
 
     const messages$ = inputValue$.filter(val => val.length > 0);
+
     const sinks = {
         DOM: vtree$,
         value$: messages$

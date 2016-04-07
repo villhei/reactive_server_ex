@@ -37,7 +37,7 @@ function main(sources) {
             input
         ])])
     );
-
+    
     return {
         DOM: vtree$,
         Channel: chatInputValues$
