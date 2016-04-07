@@ -32,6 +32,8 @@ defmodule ReactiveServer.Router do
     get "/logout", SessionController, :logout, as: :logout
 
     resources "/users", UserController
+    resources "/chatrooms", ChatRoomController
+
     post "/users/:id", UserController, :update
 
   end

@@ -1,0 +1,13 @@
+<h2>Show chat room</h2>
+
+<ul>
+
+  <li>
+    <strong>Name:</strong>
+    <%= @chat_room.name %>
+  </li>
+
+</ul>
+
+<%= link "Edit", to: chat_room_path(@conn, :edit, @chat_room) %>
+<%= link "Back", to: chat_room_path(@conn, :index) %>

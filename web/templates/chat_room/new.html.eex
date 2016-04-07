@@ -1,0 +1,6 @@
+<h2>New chat room</h2>
+
+<%= render "form.html", changeset: @changeset,
+                        action: chat_room_path(@conn, :create) %>
+
+<%= link "Back", to: chat_room_path(@conn, :index) %>
