@@ -3,11 +3,11 @@
 <table class="table table-striped">
   <thead>
     <tr>
-      <th>Email</th>
-      <th>Displayname</th>
-      <th>Firstname</th>
-      <th>Lastname</th>
-      <th></th>
+      <th class="col-xs-3">Email</th>
+      <th class="col-xs-2">Displayname</th>
+      <th class="col-xs-2">Firstname</th>
+      <th class="col-xs-2">Lastname</th>
+      <th class="col-xs-2"></th>
     </tr>
   </thead>
   <tbody>

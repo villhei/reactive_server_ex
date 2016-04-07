@@ -34,6 +34,8 @@
       <ul class="nav navbar-nav">
           <%= if @current_user do %>
             <li class="<%= active_path(@conn, user_path(@conn, :index)) %>"><a href="<%= user_path(@conn, :index) %>">Users</a>
+            <li class="<%= active_path(@conn, chat_room_path(@conn, :index)) %>"><a href="<%= chat_room_path(@conn, :index) %>">Chat rooms</a>
+
           <% end %>
       </ul>
       <ul class="nav navbar-nav navbar-right">
