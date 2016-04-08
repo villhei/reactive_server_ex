@@ -18,6 +18,7 @@ defmodule ReactiveServer.Router do
   pipeline :browser_session do
     plug Guardian.Plug.VerifySession
     plug Guardian.Plug.LoadResource
+    plug ReactiveServer.Plug.CurrentUser
   end
 
   scope "/", ReactiveServer do

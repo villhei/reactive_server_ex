@@ -8,10 +8,8 @@ defmodule ReactiveServer.ViewHelpers do
   def logged_in?(conn), do: Guardian.Plug.authenticated?(conn)
 
   def current_user(conn) do
-   		user = Guardian.Plug.current_resource(conn)
-   		IO.puts("\n\n\n***\n\n")
-   		IO.inspect(user)
-	end
+  	user = Guardian.Plug.current_resource(conn)
+  end
 
   def active_path(conn, path) do
     current_path = Path.join(["/" | conn.path_info])

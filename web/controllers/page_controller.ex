@@ -5,14 +5,14 @@ defmodule ReactiveServer.PageController do
   alias ReactiveServer.UserQuery
   alias ReactiveServer.UserService
 
-  def index(conn, _params, current_user, _claims) do
+  def index(conn, _params, _current_user, _claims) do
     conn 
-    |> render("index.html", current_user: current_user, claims: _claims)
+    |> render("index.html", claims: _claims)
   end
 
-  def signup(conn, _params, current_user, _claims) do
+  def signup(conn, _params, _current_user, _claims) do
     changeset = User.changeset(%User{})
-    render(conn, "signup.html", current_user: current_user, changeset: changeset)
+    render(conn, "signup.html", changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params} = params, current_user, _claims) do
@@ -34,7 +34,7 @@ defmodule ReactiveServer.PageController do
               |> put_session(:current_user, user.id)
               |> redirect(to: page_path(conn, :index))
       {:error, changeset} -> 
-        conn  |> render("signup.html", changeset: changeset,  current_user: current_user)
+        conn  |> render("signup.html", changeset: changeset)
     end
   end
 

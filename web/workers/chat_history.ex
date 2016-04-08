@@ -29,7 +29,7 @@ defmodule ReactiveServer.ChatHistory do
   end
 
   def handle_cast(n, state) do
-  IO.puts("unknown")
+  IO.puts("Unknown message")
     IO.inspect(n)
     {:noreply, state}
   end
