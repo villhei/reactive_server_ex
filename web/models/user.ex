@@ -20,7 +20,7 @@ defmodule ReactiveServer.User do
   @required_fields_update ~w()
 
   @optional_fields ~w(firstname lastname bio)
-  @optional_fields_update ~w(email firstname lastname bio password)
+  @optional_fields_update ~w(email displayname firstname lastname bio password)
 
 
   def from_email(nil), do: { :error, :not_found }
