@@ -7,7 +7,7 @@ defmodule ReactiveServer.PageController do
 
   def index(conn, _params, _current_user, _claims) do
     conn 
-    |> render("index.html", claims: _claims)
+    |> render("index.html")
   end
 
   def signup(conn, _params, _current_user, _claims) do
