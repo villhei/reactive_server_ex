@@ -47,10 +47,11 @@ defmodule ReactiveServer.UserController do
   defp do_create(conn, %{"user" => user_params}, changeset) do
     case UserService.create(changeset) do
       {:ok, user} -> 
-        conn  |> put_flash(:info, "User created")
-              |> redirect(to: user_path(conn, :index))
+        conn |> put_flash(:info, "User created")
+             |> redirect(to: user_path(conn, :index))
       {:error, changeset} -> 
-        conn  |> render("new.html", changeset: changeset)
+        conn |> put_flash(:error, "Error creating user")
+             |> render("new.html", changeset: changeset)
     end
   end
 
