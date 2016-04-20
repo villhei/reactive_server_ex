@@ -51,11 +51,11 @@ defmodule ReactiveServer.ConnCase do
         {:ok, user: Repo.get(User, 123456) }
       end
 
-      def login(conn, user) do
+      def login(user) do
         conn 
           |> Plug.Session.call(@session)
           |> fetch_session
-          |> Guardian.Plug.sign_in(user, :token)
+          |> Guardian.Plug.sign_in(Repo.get(User, 123456), :token)
       end
     end
   end

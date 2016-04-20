@@ -4,62 +4,90 @@ defmodule ReactiveServer.ChatRoomControllerTest do
   alias ReactiveServer.ChatRoom
   @valid_attrs %{name: "some content"}
   @invalid_attrs %{}
+  
+  @moduletag :chatroom_controller
+  
+  test "redirect if no login" do
+    conn = conn() 
+      |> get(chat_room_path(conn, :index))
+    assert redirected_to(conn) == "/"
+  end
 
-  test "lists all entries on index", %{conn: conn} do
-    conn = get conn, chat_room_path(conn, :index)
+  test "lists all entries on index" do
+    conn = conn() 
+      |> login 
+      |> get(chat_room_path(conn, :index))
     assert html_response(conn, 200) =~ "Listing chatrooms"
   end
 
-  test "renders form for new resources", %{conn: conn} do
-    conn = get conn, chat_room_path(conn, :new)
+  test "renders form for new resources" do
+    conn = conn() 
+      |> login 
+      |> get(chat_room_path(conn, :new))
     assert html_response(conn, 200) =~ "New chat room"
   end
 
-  test "creates resource and redirects when data is valid", %{conn: conn} do
-    conn = post conn, chat_room_path(conn, :create), chat_room: @valid_attrs
+  test "creates resource and redirects when data is valid" do
+    conn = conn() 
+      |> login 
+      |> post(chat_room_path(conn, :create), chat_room: @valid_attrs)
     assert redirected_to(conn) == chat_room_path(conn, :index)
     assert Repo.get_by(ChatRoom, @valid_attrs)
   end
 
-  test "does not create resource and renders errors when data is invalid", %{conn: conn} do
-    conn = post conn, chat_room_path(conn, :create), chat_room: @invalid_attrs
+  test "does not create resource and renders errors when data is invalid" do
+    conn = conn() 
+      |> login 
+      |> post(chat_room_path(conn, :create), chat_room: @invalid_attrs)
     assert html_response(conn, 200) =~ "New chat room"
   end
 
-  test "shows chosen resource", %{conn: conn} do
+  test "shows chosen resource" do
     chat_room = Repo.insert! %ChatRoom{}
-    conn = get conn, chat_room_path(conn, :show, chat_room)
+    conn = conn() 
+      |> login 
+      |> get(chat_room_path(conn, :show, chat_room))
     assert html_response(conn, 200) =~ "Show chat room"
   end
 
-  test "renders page not found when id is nonexistent", %{conn: conn} do
+  test "renders page not found when id is nonexistent" do
     assert_error_sent 404, fn ->
-      get conn, chat_room_path(conn, :show, -1)
+      conn()
+        |> login
+        |> get(chat_room_path(conn, :show, -1))
     end
   end
 
-  test "renders form for editing chosen resource", %{conn: conn} do
+  test "renders form for editing chosen resource" do
     chat_room = Repo.insert! %ChatRoom{}
-    conn = get conn, chat_room_path(conn, :edit, chat_room)
+    conn = conn() 
+      |> login 
+      |> get(chat_room_path(conn, :edit, chat_room))
     assert html_response(conn, 200) =~ "Edit chat room"
   end
 
-  test "updates chosen resource and redirects when data is valid", %{conn: conn} do
+  test "updates chosen resource and redirects when data is valid" do
     chat_room = Repo.insert! %ChatRoom{}
-    conn = put conn, chat_room_path(conn, :update, chat_room), chat_room: @valid_attrs
+    conn = conn() 
+      |> login
+      |> put(chat_room_path(conn, :update, chat_room), chat_room: @valid_attrs)
     assert redirected_to(conn) == chat_room_path(conn, :show, chat_room)
     assert Repo.get_by(ChatRoom, @valid_attrs)
   end
 
-  test "does not update chosen resource and renders errors when data is invalid", %{conn: conn} do
+  test "does not update chosen resource and renders errors when data is invalid" do
     chat_room = Repo.insert! %ChatRoom{}
-    conn = put conn, chat_room_path(conn, :update, chat_room), chat_room: @invalid_attrs
+    conn = conn() 
+      |> login
+      |> put(chat_room_path(conn, :update, chat_room), chat_room: @invalid_attrs)
     assert html_response(conn, 200) =~ "Edit chat room"
   end
 
-  test "deletes chosen resource", %{conn: conn} do
+  test "deletes chosen resource" do
     chat_room = Repo.insert! %ChatRoom{}
-    conn = delete conn, chat_room_path(conn, :delete, chat_room)
+    conn = conn()
+      |> login
+      |> delete(chat_room_path(conn, :delete, chat_room))
     assert redirected_to(conn) == chat_room_path(conn, :index)
     refute Repo.get(ChatRoom, chat_room.id)
   end
