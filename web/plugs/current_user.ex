@@ -6,10 +6,6 @@ defmodule ReactiveServer.Plug.CurrentUser do
 
   def call(conn, _default) do
     current_user = get_session(conn, :current_user)
-    if current_user do
-      assign(conn, :current_user, current_user)
-    else
-      conn
-    end
+    assign(conn, :current_user, current_user)
   end
 end
