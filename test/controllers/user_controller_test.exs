@@ -1,36 +1,11 @@
 defmodule ReactiveServer.UserControllerTest do
   use ReactiveServer.ConnCase
-import Plug.Conn
-  alias ReactiveServer.User
+  
   @valid_attrs %{bio: "some content", displayname: "some content", email: "foo@foo.com", firstname: "some content", lastname: "some content", password: "foo"}
   @valid_query_attrs %{bio: "some content", displayname: "some content", email: "foo@foo.com", firstname: "some content", lastname: "some content"}
   @invalid_attrs %{}
   
-  @session Plug.Session.init(
-    store: :cookie,
-    key: "_app",
-    encryption_salt: "yadayada",
-    signing_salt: "yadayada"
-  )
-
-  setup do
-    %User{
-      id: 123456,
-      displayname: "abc",
-      email: "abc@gmail.com",
-      password: Comeonin.Bcrypt.hashpwsalt("password")
-    } |> Repo.insert
-    {:ok, user: Repo.get(User, 123456) }
-  end
-
   @moduletag :user_controller
-  
-  def login(conn, user) do
-    conn 
-      |> Plug.Session.call(@session)
-      |> fetch_session
-      |> Guardian.Plug.sign_in(user, :token)
-  end
   
   test "unauthenticated should be redirected", %{} do
     conn = get conn, user_path(conn, :index)

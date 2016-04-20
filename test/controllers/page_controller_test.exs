@@ -4,8 +4,6 @@ defmodule ReactiveServer.PageControllerTest do
   
   import Phoenix.View
 
-  @opts ReactiveServer.Router.init([])
-
   @moduletag :page_controller
   
   test "GET /" do

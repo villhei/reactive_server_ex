@@ -21,6 +21,8 @@ defmodule ReactiveServer.ConnCase do
       use Phoenix.ConnTest
 
       alias ReactiveServer.Repo
+      alias ReactiveServer.User
+      
       import Ecto
       import Ecto.Changeset
       import Ecto.Query, only: [from: 1, from: 2]
@@ -29,6 +31,32 @@ defmodule ReactiveServer.ConnCase do
 
       # The default endpoint for testing
       @endpoint ReactiveServer.Endpoint
+      
+      import Plug.Conn
+      
+      @session Plug.Session.init(
+        store: :cookie,
+        key: "_app",
+        encryption_salt: "yadayada",
+        signing_salt: "yadayada"
+      )
+
+      setup do
+        %User{
+          id: 123456,
+          displayname: "abc",
+          email: "abc@gmail.com",
+          password: Comeonin.Bcrypt.hashpwsalt("password")
+        } |> Repo.insert
+        {:ok, user: Repo.get(User, 123456) }
+      end
+
+      def login(conn, user) do
+        conn 
+          |> Plug.Session.call(@session)
+          |> fetch_session
+          |> Guardian.Plug.sign_in(user, :token)
+      end
     end
   end
 
