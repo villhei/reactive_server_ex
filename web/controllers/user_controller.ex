@@ -7,7 +7,6 @@ defmodule ReactiveServer.UserController do
 
   # https://hexdocs.pm/phoenix/Phoenix.Controller.Pipeline.html#summary
   plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.AuthErrorHandler
-  plug ReactiveServer.Plug.CurrentUser
 
   # Scrub empty params to cause validation errors
   plug :scrub_params, "user" when action in [:create, :update]
@@ -77,7 +76,6 @@ defmodule ReactiveServer.UserController do
   defp email_address_in_use?(nil), do: false
 
   defp email_address_in_use?(email_address) do
-    IO.inspect(email_address)
     existing_user = Repo.one(UserQuery.by_email(email_address))
     existing_user != nil
   end
