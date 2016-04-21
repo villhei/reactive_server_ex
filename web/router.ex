@@ -28,7 +28,7 @@ defmodule ReactiveServer.Router do
     get "/signup", PageController, :signup
     post "/signup", PageController, :create
 
-    get "/login", SessionController, :login_page, as: :login
+    get "/login", SessionController, :login_page, as: :login_page
     post "/login", SessionController, :login, as: :login
     get "/logout", SessionController, :logout, as: :logout
 

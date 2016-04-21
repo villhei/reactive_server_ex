@@ -45,16 +45,17 @@ defmodule ReactiveServer.ConnCase do
         %User{
           id: 123456,
           displayname: "abc",
-          email: "abc@gmail.com",
-          password: Comeonin.Bcrypt.hashpwsalt("password")
+          email: "abc@abc.com",
+          passhash: Comeonin.Bcrypt.hashpwsalt("password")
         } |> Repo.insert
         {:ok, user: Repo.get(User, 123456) }
       end
 
-      def login(user) do
+      def login(conn) do
         conn 
           |> Plug.Session.call(@session)
           |> fetch_session
+          |> put_session(:current_user, 123456)
           |> Guardian.Plug.sign_in(Repo.get(User, 123456), :token)
       end
     end

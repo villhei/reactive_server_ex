@@ -57,7 +57,7 @@ defmodule ReactiveServer.User do
       {:ok, password} ->
         changeset
         |> Ecto.Changeset.put_change(:passhash, Comeonin.Bcrypt.hashpwsalt(password))
-        :error -> changeset
+      :error -> changeset
     end
   end
 
