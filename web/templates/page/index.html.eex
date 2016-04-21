@@ -4,7 +4,7 @@
         <div id="client-app-container"></div>
         <script src="<%= static_path(@conn, "/js/main.js") %>" async></script>
     <% else %>
-        <p><a href="<%= login_path(@conn, :login_page) %>">Sign in</a>
+        <p><a href="<%= session_path(@conn, :login_page) %>">Sign in</a>
         <p><a href="<%= page_path(@conn, :signup) %>">Register</a>
     <% end %>
 </div>

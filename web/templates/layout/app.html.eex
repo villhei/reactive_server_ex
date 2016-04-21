@@ -41,7 +41,7 @@
       <ul class="nav navbar-nav navbar-right">
           <%= if @current_user do %>
             <li class="active"><a href="<%=  user_path(@conn, :show, current_user(@conn).id ) %>">Logged in as <%= "#{current_user(@conn).displayname}"%></a></li>
-            <li><a href="<%= logout_path(@conn, :logout) %>">Log out</a></li>
+            <li><a href="<%= session_path(@conn, :logout) %>">Log out</a></li>
           <% end %>
       </ul>
     </div>

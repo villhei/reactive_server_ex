@@ -18,7 +18,7 @@ defmodule ReactiveServer.UserController do
   def unauthenticated(conn, _params) do
     conn
     |> put_flash(:error, "Authentication required")
-    |> redirect(to: login_path(conn, :login_page))
+    |> redirect(to: session_path(conn, :login_page))
   end
 
   def index(conn, _params, current_user, _claims) do

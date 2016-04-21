@@ -4,6 +4,6 @@
 
         New user? Try to <a href="<%= page_path(@conn, :signup) %>">create an account</a> first.
 
-        <%= render "form.html", changeset: @changeset, action: login_path(@conn, :login) %>
+        <%= render "form.html", changeset: @changeset, action: session_path(@conn, :login) %>
     </div>
 </div>
