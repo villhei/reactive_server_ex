@@ -1,7 +1,7 @@
 defmodule ReactiveServer.ErrorViewTest do
-  use ReactiveServer.ConnCase, async: true
+  use ReactiveServer.ConnCase
   
-  @moduletag :error_view_case
+  @moduletag :error_view
 
   # Bring render/3 and render_to_string/3 for testing custom views
   import Phoenix.View
