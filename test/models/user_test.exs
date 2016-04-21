@@ -3,7 +3,9 @@ defmodule ReactiveServer.UserTest do
 
   alias ReactiveServer.User
 
-  @valid_attrs %{bio: "some content", displayname: "some content", email: "some content", firstname: "some content", lastname: "some content", passhash: "some content", salt: "some content"}
+  @moduletag :user_model
+
+  @valid_attrs %{bio: "some content", displayname: "some content", email: "some content", firstname: "some content", lastname: "some content", password: "foo"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do
