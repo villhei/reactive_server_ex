@@ -7,10 +7,16 @@ defmodule ReactiveServer.ChatRoomControllerTest do
   
   @moduletag :chatroom_controller
   
-  test "redirect if no login" do
-    conn = conn() 
-      |> get(chat_room_path(conn, :index))
-    assert redirected_to(conn) == "/"
+  test "should redirect all pages if no login" do
+    chat_room = Repo.insert! %ChatRoom{}    
+    [:index, :new, :create, {:show, chat_room}, {:show, chat_room}, {:show, chat_room}]
+      |> Enum.each(fn params -> 
+       conn = case params do
+        {page, param} -> conn = conn() |> get(chat_room_path(conn, page, param))
+         page -> conn = conn() |> get(chat_room_path(conn, page))
+       end
+       assert redirected_to(conn) == "/"
+    end)
   end
 
   test "lists all entries on index" do

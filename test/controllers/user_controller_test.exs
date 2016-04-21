@@ -8,9 +8,16 @@ defmodule ReactiveServer.UserControllerTest do
   
   @moduletag :user_controller
   
-  test "unauthenticated should be redirected" do
-    conn = get conn, user_path(conn, :index)
-    assert redirected_to(conn) =~ "/"
+  test "should redirect all pages if no login" do
+    user = Repo.insert! %User{}    
+    [:index, :new, :create, {:show, user}, {:show, user}, {:show, user}]
+      |> Enum.each(fn params -> 
+       conn = case params do
+        {page, param} -> conn = conn() |> get(user_path(conn, page, param))
+         page -> conn = conn() |> get(user_path(conn, page))
+       end
+       assert redirected_to(conn) == "/"
+    end)
   end
 
   test "lists all entries on index" do
