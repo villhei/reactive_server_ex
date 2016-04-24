@@ -27,20 +27,14 @@ defmodule ReactiveServer.ConnCase do
       import Ecto.Query, only: [from: 1, from: 2]
 
       import ReactiveServer.Router.Helpers
-      import ReactiveServer.TestCommon, only: [get_user: 0, login: 1]
+      import ReactiveServer.TestCommon, only: [get_jwt: 1, get_user: 0, login: 1]
 
       # The default endpoint for testing
       @endpoint ReactiveServer.Endpoint
-            
-      @session Plug.Session.init(
-        store: :cookie,
-        key: "_app",
-        encryption_salt: "yadayada",
-        signing_salt: "yadayada"
-      )
 
       setup do
-        {:ok, user: get_user() }
+        user = get_user()
+        {:ok, user: user, jwt: get_jwt(user) }
       end
 
     end

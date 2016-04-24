@@ -11,30 +11,63 @@ defmodule ReactiveServer.SessionController do
       render(conn, ReactiveServer.SessionView, "login.html", changeset: changeset)
     end
   end
-
+  
+  def login(%{path_info: ["api" | _ ] } = conn, params, _current_user, _claims) do    
+    email = params["email"]
+    password = params["password"]
+    
+    case validate_login(email, password) do
+      {:ok, user} -> 
+        conn
+          |> render(:token, user: user)
+      {:error, :invalid_login} ->
+        conn
+          |> put_view(ReactiveServer.ErrorView)
+          |> put_status(401)
+          |> render("401.json")
+      _  -> 
+        conn 
+          |> put_view(ReactiveServer.ErrorView)
+          |> put_status(403)
+          |> render("403.json")
+    end
+  end
+  
   def login(conn, params, _current_user, _claims) do
-    user = Repo.one(UserQuery.by_email(params["user"]["email"] || ""))
-    if user do
-      changeset = User.login_changeset(user, params["user"])
-      if changeset.valid? do
+    case validate_login(params["user"]["email"], params["user"]["password"]) do
+      {:ok, user} -> 
         conn
           |> put_flash(:info, "User logged in")
           |> put_session(:current_user, user.id)
           |> Guardian.Plug.sign_in(user, :token)
           |> redirect(to: user_path(conn, :index))
-      else
+      {:error, :invalid_login} ->
+        conn
+          |> put_status(401)
+          |> put_flash(:error, "Invalid login")
+          |> render("login.html", changeset: User.create_changeset(%User{}, params["user"]))
+      {:error, :no_user} ->
         conn
           |> put_status(401)
           |> put_session(:error, "Invalid login information")
-          |> render("login.html", changeset: changeset)
+          |> render("login.html", changeset: User.create_changeset(%User{}, params["user"]))
+      _  -> 
+        conn
+          |> put_status(401)
+          |> put_flash(:error, "Invalid login information")
+          |> render("login.html", changeset: User.create_changeset(%User{}, params["user"]))
+    end
+  end
+  
+  def validate_login(email \\ "", password \\ "") do
+    user = Repo.one(UserQuery.by_email(email))
+    if user do
+      case User.valid_password?(user, password) do
+        true -> {:ok, user}
+        false -> {:error, :invalid_login}
       end
-    else
-      changeset = User.login_changeset(%User{})
-      |> Ecto.Changeset.add_error(:login, "incorrect")
-      conn 
-        |> put_status(401)
-        |> put_flash(:error, "Invalid login")
-        |> render(conn, "login.html", changeset: changeset)
+    else 
+      {:error, :no_user}
     end
   end
 
@@ -59,5 +92,4 @@ defmodule ReactiveServer.SessionController do
     |> put_flash(:error, "Unauthorized access")
     |> redirect(to: page_path(conn, :index))
   end
- 
 end

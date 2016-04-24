@@ -50,5 +50,6 @@ defmodule ReactiveServer.Router do
      pipe_through [:api, :api_session]
      
      resources "/users", UserController
+     post "/login", SessionController, :login, as: :session
   end
 end

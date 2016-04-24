@@ -47,10 +47,14 @@ defmodule ReactiveServer.User do
     |> cast(params, ~w(email password), ~w())
     |> validate_password
   end
+  
+  def valid_password?(user, password) do
+    do_valid_password?(password, user.passhash)
+  end
 
-  def valid_password?(nil, _), do: false
-  def valid_password?(_, nil), do: false
-  def valid_password?(password, crypted), do: Comeonin.Bcrypt.checkpw(password, crypted)
+  defp do_valid_password?(nil, _), do: false
+  defp do_valid_password?(_, nil), do: false
+  defp do_valid_password?(password, crypted), do: Comeonin.Bcrypt.checkpw(password, crypted)
 
   defp maybe_update_password(changeset) do
     case Ecto.Changeset.fetch_change(changeset, :password) do

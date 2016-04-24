@@ -4,7 +4,6 @@ defmodule ReactiveServer.UserControllerJsonTest do
   @moduletag :user_controller_json
   
   @unauthorized_error Poison.encode! %{:message =>  "Unauthorized access, please authorize your connection first", :error => "Forbidden", :code => 403}
-
   
   test "should respond with unauthorized if no login" do
     user = Repo.insert! %User{}    
