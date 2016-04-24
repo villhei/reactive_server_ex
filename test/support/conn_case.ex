@@ -19,7 +19,6 @@ defmodule ReactiveServer.ConnCase do
     quote do
       # Import conveniences for testing with connections
       use Phoenix.ConnTest
-
       alias ReactiveServer.Repo
       alias ReactiveServer.User
       
@@ -28,12 +27,11 @@ defmodule ReactiveServer.ConnCase do
       import Ecto.Query, only: [from: 1, from: 2]
 
       import ReactiveServer.Router.Helpers
+      import ReactiveServer.TestCommon, only: [get_user: 0, login: 1]
 
       # The default endpoint for testing
       @endpoint ReactiveServer.Endpoint
-      
-      import Plug.Conn
-      
+            
       @session Plug.Session.init(
         store: :cookie,
         key: "_app",
@@ -42,22 +40,9 @@ defmodule ReactiveServer.ConnCase do
       )
 
       setup do
-        %User{
-          id: 123456,
-          displayname: "abc",
-          email: "abc@abc.com",
-          passhash: Comeonin.Bcrypt.hashpwsalt("password")
-        } |> Repo.insert
-        {:ok, user: Repo.get(User, 123456) }
+        {:ok, user: get_user() }
       end
 
-      def login(conn) do
-        conn 
-          |> Plug.Session.call(@session)
-          |> fetch_session
-          |> put_session(:current_user, 123456)
-          |> Guardian.Plug.sign_in(Repo.get(User, 123456), :token)
-      end
     end
   end
 
