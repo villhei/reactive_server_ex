@@ -22,14 +22,14 @@ defmodule ReactiveServer.ChatHistory do
     {:reply, {:ok, history}, state}
   end
 
-  def handle_cast({:msg, {chat_name, sender, message}}, state) do
+  def handle_cast({:msg, {chat_name, sender, timestamp, message}} = payload, state) do
     history = get_history(state, chat_name)
-    new_history = [%{:sender => sender, :message => message}] ++ history
+    new_history = [%{:sender => sender, :timestamp => timestamp, :message => message}] ++ history
     {:noreply, state |> Map.put(chat_name, new_history)}
   end
 
   def handle_cast(n, state) do
-  IO.puts("Unknown message")
+    IO.puts("Unknown message")
     IO.inspect(n)
     {:noreply, state}
   end

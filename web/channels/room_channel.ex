@@ -9,7 +9,7 @@ defmodule ReactiveServer.RoomChannel do
             {:ok, history} = GenServer.call(ReactiveServer.ChatHistory, {:get_history, "lobby"})
           {:ok, %{message: "Joined", history: history}, authed_socket}
         {:error, reason} ->
-         { :error,  %{reason: :authentication_failed}}
+         { :error,  %{reason: reason}}
       end
   end
 
@@ -17,14 +17,15 @@ defmodule ReactiveServer.RoomChannel do
    { :error,  %{reason: :authentication_required}}
   end
 
-  def handle_in("new_msg", %{"body" => body}, socket) do
+  def handle_in("message", %{"body" => body}, socket) do
     user = current_resource(socket)
     message = strip_tags(body)
     sender = strip_tags(user.displayname)
-
-    GenServer.cast(ReactiveServer.ChatHistory, {:msg, {"lobby", sender, message}})
+    {:ok, timestamp}  = ReactiveServer.Util.Time.get_utc_date()
+    
+    GenServer.cast(ReactiveServer.ChatHistory, {:msg, {"lobby", sender, timestamp, message}})
     socket |>
-        broadcast!("new_msg", %{message: message, sender: sender})
+        broadcast!("message", %{message: message, timestamp: timestamp, sender: sender})
     {:noreply, socket}
   end
 
