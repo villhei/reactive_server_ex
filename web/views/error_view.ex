@@ -1,6 +1,14 @@
 defmodule ReactiveServer.ErrorView do
   import ReactiveServer.Router.Helpers
   use ReactiveServer.Web, :view
+  
+  def render("403.json", assigns) do
+    %{
+      error: "Forbidden",
+      code: 403,
+      message: "Unauthorized access, please authorize your connection first"
+    }
+  end
 
   def render("404.html", assigns) do
     render("not_found.html", assigns)

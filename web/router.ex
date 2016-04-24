@@ -13,6 +13,7 @@ defmodule ReactiveServer.Router do
   # This is the JSON api pipeline
   pipeline :api do
     plug :accepts, ["json"]
+    plug :put_resp_content_type, Plug.MIME.type("json")
   end
 
   pipeline :browser_session do
@@ -21,6 +22,11 @@ defmodule ReactiveServer.Router do
     plug ReactiveServer.Plug.CurrentUser
   end
 
+  pipeline :api_session do 
+    plug Guardian.Plug.VerifyHeader, realm: "Bearer"
+    plug Guardian.Plug.LoadResource
+  end
+  
   scope "/", ReactiveServer do
     pipe_through [:browser, :browser_session]   # Use the default browser stack
 
@@ -40,7 +46,9 @@ defmodule ReactiveServer.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", ReactiveServer do
-  #   pipe_through :api
-  # end
+  scope "/api", ReactiveServer do
+     pipe_through [:api, :api_session]
+     
+     resources "/users", UserController
+  end
 end
