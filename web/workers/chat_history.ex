@@ -8,7 +8,7 @@ defmodule ReactiveServer.ChatHistory do
   end
 
   defp get_history(state, chat_name) do
-    history = state |> Map.get(chat_name, [])
+      state |> Map.get(chat_name, [])
   end
 
   # Server callbacks
@@ -17,12 +17,12 @@ defmodule ReactiveServer.ChatHistory do
     {:ok, %{}}
   end
 
-  def handle_call({:get_history, chat_name}, from, state) do
+  def handle_call({:get_history, chat_name}, _from, state) do
     history = get_history(state, chat_name)
     {:reply, {:ok, history}, state}
   end
 
-  def handle_cast({:msg, {chat_name, sender, timestamp, message}} = payload, state) do
+  def handle_cast({:msg, {chat_name, sender, timestamp, message}}, state) do
     history = get_history(state, chat_name)
     new_history = [%{:sender => sender, :timestamp => timestamp, :message => message}] ++ history
     {:noreply, state |> Map.put(chat_name, new_history)}
