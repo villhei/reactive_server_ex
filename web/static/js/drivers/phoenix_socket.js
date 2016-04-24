@@ -31,12 +31,12 @@ export function PhoenixChannel(outgoing$, channelName) {
             
         // Interface with the surrounding world
 
-        channel.on('new_msg', msg => {
+        channel.on('message', msg => {
             observer.onNext(msg);
         });
 
         outgoing$.subscribe(msg =>
-            channel.push('new_msg', {body: msg})
+            channel.push('message', {body: msg})
         );
     }).share();
 }

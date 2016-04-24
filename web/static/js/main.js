@@ -1,6 +1,8 @@
 import "phoenix_html"
 import Cycle from '@cycle/core';
 import isolate from '@cycle/isolate';
+import makeHttpDriver from '@cycle/http'
+
 import Rx from 'rx';
 import {div, p, makeDOMDriver} from '@cycle/dom';
 
@@ -16,6 +18,11 @@ function main(sources) {
 
     const channel$ = sources.Channel;
     const chatMessages$ = channel$
+        .map(function(msg) {
+            return {sender: msg.sender,
+                     message: msg.message,
+                     time: new Date(msg.timestamp)}
+                 })
         .scan((acc, msg) => acc.concat(msg), [])
         .startWith([]);
 
@@ -33,7 +40,7 @@ function main(sources) {
 
     const vtree$ = state$.map(({messages, input}) =>
         div([div([
-            messages.map(msg => p(msg.sender + ' : ' + msg.message)),
+            messages.map(msg => p('['+ msg.time.toLocaleTimeString() + '] ' +  msg.sender + ': ' + msg.message)),
             input
         ])])
     );
