@@ -3,6 +3,7 @@ defmodule ReactiveServer.User do
 
   alias ReactiveServer.Repo
 
+  @derive {Poison.Encoder, only: [:email, :displayname, :firstname, :lastname, :bio]}
   schema "users" do
     field :email, :string
     field :displayname, :string
@@ -11,7 +12,7 @@ defmodule ReactiveServer.User do
     field :passhash, :string
     field :password, :string, virtual: true
     field :bio, :string
-
+    
     timestamps
   end
 
@@ -21,8 +22,7 @@ defmodule ReactiveServer.User do
 
   @optional_fields ~w(firstname lastname bio)
   @optional_fields_update ~w(email displayname firstname lastname bio password)
-
-
+  
   def from_email(nil), do: { :error, :not_found }
   def from_email(email) do
     Repo.one(User, email: email)

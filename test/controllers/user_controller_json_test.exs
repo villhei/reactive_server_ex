@@ -17,4 +17,29 @@ defmodule ReactiveServer.UserControllerJsonTest do
     assert conn.resp_body == @unauthorized_error    
     end)
   end
+  
+  test "should return unauthorized if token is not valid" do
+      user = Repo.insert! %User{}
+      conn = conn() 
+        |> put_req_header("authorization", "Bearer " <> "IAmNotAValidToken")
+        |> get("/api" <> user_path(conn, :show, user))
+    assert conn.status == 403
+    assert conn.resp_body == @unauthorized_error    
+  end
+  
+  test "should return a user when requesting a resource", %{jwt: jwt} do
+      user = Repo.insert! %User{}
+      conn = conn() 
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api" <> user_path(conn, :show, user))
+      assert json_response(conn, 200) == Poison.encode!(Repo.get(User, user.id))
+  end
+  
+  test "should return all users when requesting them", %{jwt: jwt} do
+      Repo.insert! %User{}
+      conn = conn() 
+        |> put_req_header("authorization", "Bearer " <> jwt)
+        |> get("/api" <> user_path(conn, :index))
+      assert json_response(conn, 200) == Poison.encode!(Repo.all(User))
+  end
 end
