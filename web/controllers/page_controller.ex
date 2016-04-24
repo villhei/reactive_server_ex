@@ -2,7 +2,6 @@ defmodule ReactiveServer.PageController do
   use ReactiveServer.Web, :controller
 
   alias ReactiveServer.User
-  alias ReactiveServer.UserQuery
   alias ReactiveServer.UserService
 
   def index(conn, _params, _current_user, _claims) do
@@ -15,18 +14,18 @@ defmodule ReactiveServer.PageController do
     render(conn, "signup.html", changeset: changeset)
   end
 
-  def create(conn, %{"user" => user_params} = params, current_user, _claims) do
+  def create(conn, %{"user" => user_params}, current_user, _claims) do
     email = user_params["email"] || nil
     changeset = User.create_changeset(%User{}, user_params)
     case UserService.email_address_in_use?(email) do
       true -> conn
         |> put_flash(:error, "The email address is in use, try logging in!")
         |> render("signup.html", changeset: changeset)
-      false -> do_create(conn, params, current_user, changeset)
+      false -> do_create(conn, current_user, changeset)
     end 
   end
 
-  defp do_create(conn, %{"user" => user_params}, current_user, changeset) do
+  defp do_create(conn, current_user, changeset) do
     case UserService.create(changeset) do
       {:ok, user} -> 
         conn  |> put_flash(:info, "User created")

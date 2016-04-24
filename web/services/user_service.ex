@@ -14,7 +14,15 @@ defmodule ReactiveServer.UserService do
     existing_user = Repo.one(UserQuery.by_email(email_address))
     existing_user != nil
   end
-
+  
+  def get_users do 
+    Repo.all(UserQuery.order_by_email)
+      |> Enum.map(fn(user) -> remove_secrets(user) end)
+  end
+  
+  def get_user(id) do
+    remove_secrets(Repo.get!(User, id))
+  end
 
   def create(changeset) do
     if changeset.valid? do
@@ -22,5 +30,12 @@ defmodule ReactiveServer.UserService do
     else
       {:error, changeset}
     end
+  end
+  
+  # Here we use delete! (with a bang) because we expect
+  # it to always work (and if it does not, it will raise).
+  def delete!(id) do
+    user = Repo.get!(User, id)
+    Repo.delete!(user)
   end
 end
