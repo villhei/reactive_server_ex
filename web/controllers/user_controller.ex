@@ -6,7 +6,7 @@ defmodule ReactiveServer.UserController do
   alias ReactiveServer.UserService
 
   # https://hexdocs.pm/phoenix/Phoenix.Controller.Pipeline.html#summary
-  plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.AuthErrorHandler
+  plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.SessionController
 
   # Scrub empty params to cause validation errors
   plug :scrub_params, "user" when action in [:create, :update]
@@ -24,12 +24,12 @@ defmodule ReactiveServer.UserController do
   def index(conn, _params, current_user, _claims) do
     users = Repo.all(UserQuery.order_by_email)
     |> Enum.map(fn(user) -> remove_secrets(user) end)
-    render(conn, "index.html", users: users)
+    render(conn, :index, users: users)
   end
 
   def new(conn, _params, current_user, _claims) do
     changeset = User.changeset(%User{})
-    render(conn, "new.html", changeset: changeset)
+    render(conn, :new, changeset: changeset)
   end
 
   def create(conn, %{"user" => user_params} = params, current_user, _claims) do
@@ -39,7 +39,7 @@ defmodule ReactiveServer.UserController do
     case UserService.email_address_in_use?(email) do
       true -> conn
         |> put_flash(:error, "An user exists with the given email address")
-        |> render("new.html", changeset: changeset)
+        |> render(:new, changeset: changeset)
       false -> do_create(conn, params, changeset)
     end 
   end
@@ -51,7 +51,7 @@ defmodule ReactiveServer.UserController do
              |> redirect(to: user_path(conn, :index))
       {:error, changeset} -> 
         conn |> put_flash(:error, "Error creating user")
-             |> render("new.html", changeset: changeset)
+             |> render(:new, changeset: changeset)
     end
   end
 
@@ -65,13 +65,13 @@ defmodule ReactiveServer.UserController do
 
   def show(conn, %{"id" => id}, _current_user, _claims) do
     user = Repo.get!(User, id)
-    render(conn, "show.html",  user: remove_secrets(user))
+    render(conn, :show,  user: remove_secrets(user))
   end
 
   def edit(conn, %{"id" => id}, _current_user, _claims) do
     user = Repo.get!(User, id)
     changeset = User.changeset(user)
-    render(conn, "edit.html", user: user, changeset: changeset)
+    render(conn, :edit, user: user, changeset: changeset)
   end
   
   defp email_address_in_use?(nil), do: false
@@ -89,7 +89,7 @@ defmodule ReactiveServer.UserController do
       false -> do_update(conn, params, changeset)
       true -> conn
       |> put_flash(:error, "An user exists with the given email address")
-      |> render("edit.html", user: remove_secrets(user), changeset: changeset) 
+      |> render(:edit, user: remove_secrets(user), changeset: changeset) 
     end 
   end
 
@@ -101,7 +101,7 @@ defmodule ReactiveServer.UserController do
       |> put_flash(:info, "User updated successfully.")
       |> redirect(to: user_path(conn, :index))
     else
-      render(conn, "edit.html", user: remove_secrets(user), changeset: changeset)
+      render(conn, :edit, user: remove_secrets(user), changeset: changeset)
     end
   end
 

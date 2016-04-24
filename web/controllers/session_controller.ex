@@ -43,4 +43,21 @@ defmodule ReactiveServer.SessionController do
     |> put_flash(:info, "Logged out")
     |> redirect(to: page_path(conn, :index))
   end
+  
+  def unauthenticated(%{path_info: ["api" | _ ] } = conn, _params) do
+		IO.inspect(conn)
+    IO.inspect("Trying the json response")
+    conn 
+    |> put_view(ReactiveServer.ErrorView)
+    |> put_status(403)
+    |> render("403.json")
+  end
+  
+	def unauthenticated(conn, _params) do
+		IO.inspect(conn)
+    conn 
+    |> put_flash(:error, "Unauthorized access")
+    |> redirect(to: page_path(conn, :index))
+  end
+ 
 end

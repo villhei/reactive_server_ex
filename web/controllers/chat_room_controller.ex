@@ -4,7 +4,7 @@ defmodule ReactiveServer.ChatRoomController do
   alias ReactiveServer.ChatRoom
   
     # https://hexdocs.pm/phoenix/Phoenix.Controller.Pipeline.html#summary
-  plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.AuthErrorHandler
+  plug Guardian.Plug.EnsureAuthenticated, handler: ReactiveServer.SessionController
   plug ReactiveServer.Plug.CurrentUser
 
   plug :scrub_params, "chat_room" when action in [:create, :update]
