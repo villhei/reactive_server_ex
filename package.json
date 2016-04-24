@@ -3,6 +3,7 @@
   "dependencies": {
     "@cycle/core": "^6.0.3",
     "@cycle/dom": "^9.2.2",
+    "@cycle/http": "^8.2.2",
     "@cycle/isolate": "^1.2.0",
     "bootstrap3": "^3.3.5",
     "extract-text-webpack-plugin": "^1.0.1",

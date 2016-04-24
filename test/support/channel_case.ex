@@ -34,14 +34,14 @@ defmodule ReactiveServer.ChannelCase do
       @endpoint ReactiveServer.Endpoint
             
       setup do
-        
         user = get_user()
         jwt = get_jwt(user)
         
         {:ok, socket} = connect(UserSocket, %{})
         {:ok, _, socket} = subscribe_and_join(socket, ReactiveServer.RoomChannel, "room:lobby", %{"guardian_token" => "#{jwt}"})
-        {:ok, user: get_user, socket: socket}
+        {:ok, user: user, socket: socket}
       end
+      
       
     end
   end

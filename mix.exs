@@ -19,7 +19,7 @@ defmodule ReactiveServer.Mixfile do
   def application do
     [mod: {ReactiveServer, []},
      applications: [:phoenix, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex]]
+                    :phoenix_ecto, :postgrex, :timex]]
   end
 
   # Specifies which paths to compile per environment.
@@ -39,7 +39,8 @@ defmodule ReactiveServer.Mixfile do
      {:gettext, "~> 0.9"},
      {:cowboy, "~> 1.0"},
      {:guardian, "~> 0.10.0"},
-     {:html_sanitize_ex, "~> 0.1.0"}]
+     {:html_sanitize_ex, "~> 0.1.0"},
+     {:timex, "~> 2.1.4"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.

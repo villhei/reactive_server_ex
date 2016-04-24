@@ -36,14 +36,14 @@ defmodule ReactiveServer.SessionControllerTest do
   
   # JSON Api
 
-  test "POST /api/login makes a succesful login", %{jwt: jwt} do
-    
-    valid_response = %{code: 200, message: "Login succesful" }
-    conn = conn() 
+  test "POST /api/login makes a succesful login" do
+        conn = conn() 
       |> put_req_header("content-type", "application/json")
       |> post("/api/login", Poison.encode!(@valid_login))
-    assert conn.status == 200
+    
     response = Poison.decode!(conn.resp_body)
+    
+    assert conn.status == 200
     assert Map.get(response, "code") == 200
     assert Map.get(response, "message") == "Login succesful"
     assert String.length(Map.get(response, "jwt_token")) > 0
